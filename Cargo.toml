@@ -1,0 +1,10 @@
+[package]
+name = "hashcheck"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+[dev-dependencies]
+cyclic-poly-23 = "0.4.0"
+proptest = "1.7.0"
