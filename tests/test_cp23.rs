@@ -46,14 +46,14 @@ proptest! {
     #[test]
     fn test_hashes_match_after_rolling((data, window) in rolling_hash_strategy()) {
         let mut hasher = CyclicPoly32::new(window);
-        let mut rolling_hash_value = hasher.update(&data[0..window]);
+        let _ = hasher.update(&data[0..window]);
         for i in 1..=(data.len() - window) {
             let leaving = data[i - 1];
             let entering = data[i + window - 1];
-            rolling_hash_value = hasher.rotate(leaving, entering);
+            let rolling_hash_value = hasher.rotate(leaving, entering);
             let mut tester = CyclicPoly32::new(window);
             let expected = tester.update(&data[i..i+window]);
-            assert_eq!(rolling_hash_value, expected, "Hash mismatched at index {}", i);
+            proptest::prop_assert_eq!(rolling_hash_value, expected, "Hash mismatched at index {}", i);
         }
     }
 }
@@ -77,7 +77,7 @@ proptest! {
 }
 
 #[test]
-fn test_summarize_collisions() {
+fn summarize_collisions() {
     // wait for the collision proptest to finish
     let mut count = COUNTER.load(Ordering::SeqCst);
     while count < TO_RUN.try_into().unwrap() {
